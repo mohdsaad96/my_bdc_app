@@ -1,0 +1,119 @@
+import { useChatStore } from "../store/useChatStore";
+import { useEffect, useRef } from "react";
+
+import ChatHeader from "./ChatHeader";
+import MessageInput from "./MessageInput";
+import MessageSkeleton from "./skeletons/MessageSkeleton";
+import { useAuthStore } from "../store/useAuthStore";
+import { formatMessageTime } from "../lib/utils";
+
+const ChatContainer = () => {
+  const {
+    messages,
+    getMessages,
+    isMessagesLoading,
+    selectedUser,
+    subscribeToMessages,
+    unsubscribeFromMessages,
+    deleteMessage,
+  } = useChatStore();
+  const { authUser } = useAuthStore();
+  const messageEndRef = useRef(null);
+
+  useEffect(() => {
+    getMessages(selectedUser._id);
+
+    subscribeToMessages();
+
+    return () => unsubscribeFromMessages();
+  }, [selectedUser._id, getMessages, subscribeToMessages, unsubscribeFromMessages]);
+
+  useEffect(() => {
+    if (messageEndRef.current && messages) {
+      messageEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
+
+  if (isMessagesLoading) {
+    return (
+      <div className="flex-1 flex flex-col overflow-auto">
+        <ChatHeader />
+        <MessageSkeleton />
+        <MessageInput />
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex-1 flex flex-col overflow-auto">
+      <ChatHeader />
+
+      <div className="flex-1 overflow-y-auto p-2 sm:p-4 space-y-3 sm:space-y-4">
+        {messages.map((message) => (
+          <div
+            key={message._id}
+            className={`chat ${message.senderId === authUser._id ? "chat-end" : "chat-start"}`}
+            ref={messageEndRef}
+          >
+            <div className="chat-image avatar">
+              <div className="size-8 sm:size-10 rounded-full border">
+                <img
+                  src={
+                    message.senderId === authUser._id
+                      ? authUser.profilePic || "/avatar.png"
+                      : selectedUser.profilePic || "/avatar.png"
+                  }
+                  alt="profile pic"
+                />
+              </div>
+            </div>
+            <div className="chat-header mb-1 flex items-center gap-1 sm:gap-2">
+              <time className="text-xs opacity-50 ml-1">
+                {formatMessageTime(message.createdAt)}
+              </time>
+              {message.senderId === authUser._id && (
+                <>
+                  <span className="ml-2 text-xs opacity-60" title={message.status === 'read' ? 'Read' : 'Sent'}>
+                    {message.status === 'read' ? (
+                      <span className="text-blue-500">✓✓</span>
+                    ) : (
+                      <span className="text-gray-400">✓</span>
+                    )}
+                  </span>
+
+                  <button
+                    className="btn btn-xs btn-outline btn-error ml-2"
+                    title="Delete message"
+                    onClick={async () => {
+                      await deleteMessage(message._id);
+                    }}
+                  >
+                    Delete
+                  </button>
+                </>
+              )}
+            </div>
+            <div className="chat-bubble flex flex-col text-xs sm:text-base">
+              {message.image && (
+                <img
+                  src={message.image}
+                  alt="Attachment"
+                  className="max-w-[120px] sm:max-w-[200px] rounded-md mb-2"
+                />
+              )}
+              {message.audio && (
+                <div className="mb-2">
+                  <audio controls src={message.audio} className="max-w-[200px]" />
+                </div>
+              )}
+              {message.text && <p>{message.text}</p>}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <MessageInput />
+    </div>
+  );
+};
+export default ChatContainer;

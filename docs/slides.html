@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BDC Messenger — Slides</title>
+  <style>
+    :root{--bg:#0f0b0a;--fg:#f3e9e1;--accent:#e09b4f}
+    html,body{height:100%;margin:0}
+    body{font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial; background:var(--bg); color:var(--fg);}
+    .deck{height:100vh;display:flex;align-items:center;justify-content:center}
+    .slide{width:90vw;max-width:980px;height:70vh;background:linear-gradient(180deg,#121212,#0d0b0b);border-radius:12px;padding:36px;box-sizing:border-box;box-shadow:0 10px 40px rgba(0,0,0,0.6);display:none;flex-direction:column}
+    .slide.visible{display:flex}
+    h1{margin:0;font-size:28px}
+    h2{margin:6px 0 12px;font-size:18px;color:var(--accent)}
+    p{margin:6px 0;font-size:14px}
+    ul{margin:6px 0 0 18px}
+    .controls{position:fixed;right:20px;bottom:18px;color:#ccc;font-size:13px}
+    .note{font-size:12px;color:#aaa;margin-top:auto}
+  </style>
+</head>
+<body>
+  <div class="deck">
+    <section id="slide-1" class="slide visible">
+      <h1>BDC Messenger</h1>
+      <h2>Realtime Full-Stack Chat Application</h2>
+      <p>Author: Mohd Saad Mohd Shakeel — Course: Bachlor Of Computer Application — Short demo & architecture overview</p>
+      <p class="note">Use ← → or click to navigate. Press Esc to jump to title.</p>
+    </section>
+
+    <section id="slide-2" class="slide">
+      <h1>Problem & Objectives</h1>
+      <ul>
+        <li>Build a realtime chat with persistence and presence.</li>
+        <li>Secure authentication and profile management.</li>
+        <li>Responsive UI and smooth UX for messaging.</li>
+      </ul>
+    </section>
+
+    <section id="slide-3" class="slide">
+      <h1>Key Features</h1>
+      <ul>
+        <li>Signup / Login / Profile updates</li>
+        <li>One-to-one messaging with images</li>
+        <li>Realtime updates (Socket.io) and online users</li>
+        <li>Optional call signaling using WebRTC</li>
+      </ul>
+    </section>
+
+    <section id="slide-4" class="slide">
+      <h1>Architecture & Tech Stack</h1>
+      <p><strong>Frontend:</strong> React (Vite), TailwindCSS, DaisyUI, Zustand, Axios</p>
+      <p><strong>Backend:</strong> Node.js (ESM), Express, Socket.io, Mongoose, MongoDB Atlas</p>
+      <p><strong>Media:</strong> Cloudinary for images</p>
+    </section>
+
+    <section id="slide-5" class="slide">
+      <h1>How it works (flow)</h1>
+      <ol>
+        <li>Client calls REST API for auth and messages.</li>
+        <li>Client connects to Socket.io for realtime events.</li>
+        <li>Server persists messages in MongoDB; broadcasts new messages via Socket.io.</li>
+      </ol>
+    </section>
+
+    <section id="slide-6" class="slide">
+      <h1>Run & Demo</h1>
+      <p>Install and run:</p>
+      <pre style="background:#070707;padding:8px;border-radius:6px;color:#dcdcdc">npm install --prefix backend
+npm install --prefix frontend
+cd backend
+npm start
+cd ../frontend
+npm run dev
+Open http://localhost:5173</pre>
+    </section>
+
+    <section id="slide-7" class="slide">
+      <h1>Future Work & Contact</h1>
+      <ul>
+        <li>Group chats, read receipts, richer media</li>
+        <li>Dockerized deployment and CI/CD</li>
+      </ul>
+      <p class="note">Contact: [msaadm96@gmail.com] — Good luck with your submission!</p>
+    </section>
+
+  </div>
+
+  <div class="controls">← previous • next →</div>
+
+  <script>
+    const slides = Array.from(document.querySelectorAll('.slide'));
+    let idx = 0;
+    function show(i){ slides.forEach((s,si)=> s.classList.toggle('visible', si===i)); }
+    function next(){ idx = Math.min(slides.length-1, idx+1); show(idx); }
+    function prev(){ idx = Math.max(0, idx-1); show(idx); }
+    document.addEventListener('keydown', (e)=>{
+      if(e.key === 'ArrowRight' || e.key === 'PageDown') next();
+      if(e.key === 'ArrowLeft' || e.key === 'PageUp') prev();
+      if(e.key === 'Escape') { idx = 0; show(idx); }
+    });
+    document.addEventListener('click', ()=> next());
+    show(0);
+  </script>
+</body>
+</html>

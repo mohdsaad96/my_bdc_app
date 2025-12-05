@@ -1,0 +1,20 @@
+{
+  "name": "chat-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "backend/index.js",
+  "scripts": {
+    "build": "npm install --prefix backend && npm install --prefix frontend && npm run build --prefix frontend",
+    "start": "npm run start --prefix backend"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "expo": "^54.0.23",
+    "fetch-cookie": "^3.1.0",
+    "node-fetch": "^2.7.0",
+    "socket.io-client": "^4.8.1",
+    "tough-cookie": "^6.0.0"
+  }
+}
